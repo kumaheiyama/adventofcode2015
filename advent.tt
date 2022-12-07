@@ -2,7 +2,7 @@
 <#@ import namespace="System.IO" #>
 <#@ output extenssion=".cs" #>
 <#
-var day = 4;
+var day = <number of day>;
 #>
 internal class Advent<#= day #>
 {
