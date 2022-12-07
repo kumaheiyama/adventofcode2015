@@ -30,25 +30,7 @@ internal class Advent3
         table[santaPos.Item1][santaPos.Item2] = 1;
         for (int i = 0; i < fileContent.Length; i++)
         {
-            var move = fileContent[i];
-
-            var top = santaPos.Item1;
-            var left = santaPos.Item2;
-            if (move == '^') {
-                santaPos = new Tuple<int, int>(--top, left);
-            }
-            else if (move == '>') {
-                santaPos = new Tuple<int, int>(top, ++left);
-            }
-            else if (move == 'v') {
-                santaPos = new Tuple<int, int>(++top, left);
-            }
-            else if (move == '<') {
-                santaPos = new Tuple<int, int>(top, --left);
-            }
-
-            var val = table[santaPos.Item1][santaPos.Item2];
-            table[santaPos.Item1][santaPos.Item2] = val + 1;
+            santaPos = Move(santaPos, fileContent[i], table);
         }
         var score1 = GetGiftCount(table);
 
@@ -57,55 +39,44 @@ internal class Advent3
         table2[santaPos.Item1][santaPos.Item2] = 2;
         for (int i = 0; i < fileContent.Length; i += 2)
         {
-            var santaMove = fileContent[i];
-            var robosantaMove = fileContent[i+1];
-
-            var top = santaPos.Item1;
-            var left = santaPos.Item2;
-            var top2 = robosantaPos.Item1;
-            var left2 = robosantaPos.Item2;
-            if (santaMove == '^')
-            {
-                santaPos = new Tuple<int, int>(--top, left);
-            }
-            else if (santaMove == '>')
-            {
-                santaPos = new Tuple<int, int>(top, ++left);
-            }
-            else if (santaMove == 'v')
-            {
-                santaPos = new Tuple<int, int>(++top, left);
-            }
-            else if (santaMove == '<')
-            {
-                santaPos = new Tuple<int, int>(top, --left);
-            }
-
-            if (robosantaMove == '^')
-            {
-                robosantaPos = new Tuple<int, int>(--top2, left2);
-            }
-            else if (robosantaMove == '>')
-            {
-                robosantaPos = new Tuple<int, int>(top2, ++left2);
-            }
-            else if (robosantaMove == 'v')
-            {
-                robosantaPos = new Tuple<int, int>(++top2, left2);
-            }
-            else if (robosantaMove == '<')
-            {
-                robosantaPos = new Tuple<int, int>(top2, --left2);
-            }
-
-            var santaVal = table2[santaPos.Item1][santaPos.Item2];
-            var robosantaVal = table2[robosantaPos.Item1][robosantaPos.Item2];
-            table2[santaPos.Item1][santaPos.Item2] = santaVal + 1;
-            table2[robosantaPos.Item1][robosantaPos.Item2] = robosantaVal + 1;
+            santaPos = Move(santaPos, fileContent[i], table2);
+            robosantaPos = Move(robosantaPos, fileContent[i+1], table2);
         }
         var score2 = GetGiftCount(table2);
 
         Console.WriteLine($"Advent3: 1 ({score1}), 2 ({score2})");
+    }
+
+    private static Tuple<int, int> Move(Tuple<int, int> pos, char move, Dictionary<int, Dictionary<int, int>> tbl)
+    {
+        var newPos = GetSantaPos(pos, move);
+        var val = tbl[pos.Item1][pos.Item2];
+        tbl[pos.Item1][pos.Item2] = val + 1;
+        return newPos;
+    }
+
+    private static Tuple<int, int> GetSantaPos(Tuple<int, int> input, char santaMove)
+    {
+        var top = input.Item1;
+        var left = input.Item2;
+        Tuple<int, int> output;
+        if (santaMove == '^')
+        {
+            output = new Tuple<int, int>(--top, left);
+        }
+        else if (santaMove == '>')
+        {
+            output = new Tuple<int, int>(top, ++left);
+        }
+        else if (santaMove == 'v')
+        {
+            output = new Tuple<int, int>(++top, left);
+        }
+        else
+        {
+            output = new Tuple<int, int>(top, --left);
+        }
+        return output;
     }
 
     private static int GetGiftCount(Dictionary<int, Dictionary<int, int>> tbl)
